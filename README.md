@@ -1,3 +1,6 @@
+NOTE: Please test with local deployment as there is some issue with deployed ones currently.
+
+
 # Status Page Application
 
 A real-time status page application built with React, Node.js, and Socket.IO for monitoring services and incidents.
