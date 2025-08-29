@@ -15,7 +15,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 type TabType = 'services' | 'incidents' | 'users' | 'organizations' | 'team';
 
-export function AdminDashboard() {
+interface AdminDashboardProps {
+  user: User | null;
+}
+
+export function AdminDashboard({ user }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<TabType>('services');
   const [services, setServices] = useState<Service[]>([]);
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -23,6 +27,7 @@ export function AdminDashboard() {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [members, setMembers] = useState<OrganizationMember[]>([]);
   const [loading, setLoading] = useState(true);
+
   
   // Service states
   const [showAddService, setShowAddService] = useState(false);
@@ -64,10 +69,14 @@ export function AdminDashboard() {
         setUsers(usersData);
         setOrganizations(organizationsData);
         
-        // Fetch members for the first organization if available
+        // Fetch members for all organizations
         if (organizationsData.length > 0) {
-          const membersData = await membersApi.getByOrganization(organizationsData[0].id);
-          setMembers(membersData);
+          const allMembersPromises = organizationsData.map(org => 
+            membersApi.getByOrganization(org.id)
+          );
+          const allMembersArrays = await Promise.all(allMembersPromises);
+          const allMembers = allMembersArrays.flat();
+          setMembers(allMembers);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -79,7 +88,7 @@ export function AdminDashboard() {
     fetchData();
 
     // Connect to socket for real-time updates
-    const socket = socketService.connect();
+    socketService.connect();
 
     socketService.onServiceStatusUpdate((updatedService) => {
       setServices(prev => 
@@ -105,6 +114,13 @@ export function AdminDashboard() {
       socketService.disconnect();
     };
   }, []);
+
+  // Refresh members when switching to team tab
+  useEffect(() => {
+    if (activeTab === 'team' && organizations.length > 0) {
+      refreshMembers();
+    }
+  }, [activeTab, organizations.length]);
 
   // Service handlers
   const handleAddService = async () => {
@@ -204,11 +220,31 @@ export function AdminDashboard() {
     }
   };
 
+  // Check if user has admin access
+  const userMemberships = user?.orgs || [];
+  const isAdmin = userMemberships.some(member => member.role === 'admin');
+
+  // Function to refresh members data
+  const refreshMembers = async () => {
+    try {
+      if (organizations.length > 0) {
+        const allMembersPromises = organizations.map(org => 
+          membersApi.getByOrganization(org.id)
+        );
+        const allMembersArrays = await Promise.all(allMembersPromises);
+        const allMembers = allMembersArrays.flat();
+        setMembers(allMembers);
+      }
+    } catch (error) {
+      console.error('Error refreshing members:', error);
+    }
+  };
+
   // Team management handlers
   const handleAddMember = async () => {
     try {
-      const member = await membersApi.create(newMember);
-      setMembers(prev => [...prev, member]);
+      await membersApi.create(newMember);
+      await refreshMembers(); // Refresh all members data
       setNewMember({ userId: '', organizationId: '', role: 'member' });
       setShowAddMember(false);
     } catch (error) {
@@ -218,12 +254,8 @@ export function AdminDashboard() {
 
   const handleUpdateMemberRole = async (memberId: string, role: string) => {
     try {
-      const updatedMember = await membersApi.update(memberId, { role });
-      setMembers(prev => 
-        prev.map(member => 
-          member.id === memberId ? updatedMember : member
-        )
-      );
+      await membersApi.update(memberId, { role });
+      await refreshMembers(); // Refresh all members data
     } catch (error) {
       console.error('Error updating member role:', error);
     }
@@ -232,7 +264,7 @@ export function AdminDashboard() {
   const handleRemoveMember = async (memberId: string) => {
     try {
       await membersApi.delete(memberId);
-      setMembers(prev => prev.filter(member => member.id !== memberId));
+      await refreshMembers(); // Refresh all members data
     } catch (error) {
       console.error('Error removing member:', error);
     }
@@ -249,9 +281,11 @@ export function AdminDashboard() {
   const tabs = [
     { id: 'services', label: 'Services' },
     { id: 'incidents', label: 'Incidents' },
-    { id: 'users', label: 'Users' },
-    { id: 'organizations', label: 'Organizations' },
-    { id: 'team', label: 'Team Management' }
+    ...(isAdmin ? [
+      { id: 'users', label: 'Users' },
+      { id: 'organizations', label: 'Organizations' },
+      { id: 'team', label: 'Team Management' }
+    ] : [])
   ];
 
   return (
@@ -261,9 +295,29 @@ export function AdminDashboard() {
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Admin Dashboard
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-gray-600 mb-4">
             Manage services, incidents, users, and team access
           </p>
+          {user && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 inline-block">
+              <p className="text-sm text-blue-800">
+                Logged in as: <strong>{user.name || user.email}</strong>
+              </p>
+              {!isAdmin && (
+                <p className="text-sm text-orange-700 mt-1">
+                  ⚠️ Limited access - Admin privileges required for full features
+                </p>
+              )}
+              {isAdmin && (
+                <p className="text-sm text-green-700 mt-1">
+                  ✅ Full admin access granted
+                </p>
+              )}
+              <div className="mt-2 text-xs text-gray-600">
+                <p>Organizations: {user.orgs?.map(org => `${org.organization.name} (${org.role})`).join(', ') || 'None'}</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Tab Navigation */}
@@ -439,7 +493,9 @@ export function AdminDashboard() {
           <div>
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-semibold text-gray-900">Users</h2>
-              <Button onClick={() => setShowAddUser(true)}>Add User</Button>
+              {isAdmin && (
+                <Button onClick={() => setShowAddUser(true)}>Add User</Button>
+              )}
             </div>
 
             {showAddUser && (
@@ -498,16 +554,18 @@ export function AdminDashboard() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDeleteUser(user.id)}
-                          >
-                            Delete
-                          </Button>
+                          {isAdmin && (
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleDeleteUser(user.id)}
+                            >
+                              Delete
+                            </Button>
+                          )}
                         </TableCell>
                       </TableRow>
-                    ))}
+                                        ))}
                   </TableBody>
                 </Table>
               </CardContent>
@@ -520,7 +578,9 @@ export function AdminDashboard() {
           <div>
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-semibold text-gray-900">Organizations</h2>
-              <Button onClick={() => setShowAddOrganization(true)}>Add Organization</Button>
+              {isAdmin && (
+                <Button onClick={() => setShowAddOrganization(true)}>Add Organization</Button>
+              )}
             </div>
 
             {showAddOrganization && (
@@ -554,13 +614,15 @@ export function AdminDashboard() {
                     <div className="space-y-2">
                       <p><strong>Services:</strong> {org.services?.length || 0}</p>
                       <p><strong>Incidents:</strong> {org.incidents?.length || 0}</p>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDeleteOrganization(org.id)}
-                      >
-                        Delete
-                      </Button>
+                      {isAdmin && (
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDeleteOrganization(org.id)}
+                        >
+                          Delete
+                        </Button>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -574,7 +636,14 @@ export function AdminDashboard() {
           <div>
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-semibold text-gray-900">Team Management</h2>
-              <Button onClick={() => setShowAddMember(true)}>Add Member</Button>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={refreshMembers}>
+                  Refresh
+                </Button>
+                {isAdmin && (
+                  <Button onClick={() => setShowAddMember(true)}>Add Member</Button>
+                )}
+              </div>
             </div>
 
             {showAddMember && (
@@ -637,50 +706,63 @@ export function AdminDashboard() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Organization Members</CardTitle>
+                <CardTitle>Organization Members ({members.length} total)</CardTitle>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>User</TableHead>
-                      <TableHead>Organization</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {members.map((member) => (
+                {members.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>No team members found.</p>
+                    <p className="text-sm mt-1">Add members to organizations to see them here.</p>
+                  </div>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>User</TableHead>
+                        <TableHead>Organization</TableHead>
+                        <TableHead>Role</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {members.map((member) => (
                       <TableRow key={member.id}>
                         <TableCell>{member.user.name || member.user.email}</TableCell>
                         <TableCell>{member.organization.name}</TableCell>
                         <TableCell>
-                          <Select
-                            value={member.role}
-                            onValueChange={(value) => handleUpdateMemberRole(member.id, value)}
-                          >
-                            <SelectTrigger className="w-32">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="admin">Admin</SelectItem>
-                              <SelectItem value="member">Member</SelectItem>
-                            </SelectContent>
-                          </Select>
+                          {isAdmin ? (
+                            <Select
+                              value={member.role}
+                              onValueChange={(value) => handleUpdateMemberRole(member.id, value)}
+                            >
+                              <SelectTrigger className="w-32">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="admin">Admin</SelectItem>
+                                <SelectItem value="member">Member</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <Badge variant="secondary">{member.role}</Badge>
+                          )}
                         </TableCell>
                         <TableCell>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleRemoveMember(member.id)}
-                          >
-                            Remove
-                          </Button>
+                          {isAdmin && (
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleRemoveMember(member.id)}
+                            >
+                              Remove
+                            </Button>
+                          )}
                         </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
+                )}
               </CardContent>
             </Card>
           </div>

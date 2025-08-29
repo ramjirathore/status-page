@@ -30,7 +30,7 @@ export function PublicStatusPage() {
     fetchData();
 
     // Connect to socket for real-time updates
-    const socket = socketService.connect();
+    socketService.connect();
 
     // Listen for service status updates
     socketService.onServiceStatusUpdate((updatedService) => {
