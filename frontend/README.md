@@ -26,7 +26,6 @@ A modern React application for displaying and managing service status and incide
 - **Modern UI/UX**: Built with shadcn/ui components
 - **API Integration**: RESTful API with comprehensive endpoints
 - **Database Integration**: PostgreSQL with Prisma ORM
-- **Authentication Ready**: Clerk integration for user management
 
 ## 🚀 Features
 
@@ -77,7 +76,7 @@ A modern React application for displaying and managing service status and incide
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/ramjirathore/status-page.git
 cd status-page/frontend
 ```
 
@@ -170,7 +169,7 @@ frontend/
    - Confirm incident count is shown for services with active incidents
 
 3. **Test Real-time Updates**:
-   - Open the admin dashboard in another tab
+   - Login and open the admin dashboard in another tab
    - Change a service status
    - Verify the change appears immediately on the public page
 
@@ -400,9 +399,7 @@ This project is licensed under the MIT License.
 
 - **Live Demo**: [https://status-page-gamma-three.vercel.app/](https://status-page-gamma-three.vercel.app/)
 - **Backend API**: [https://status-page-bx79.onrender.com/api](https://status-page-bx79.onrender.com/api)
-- **GitHub Repository**: [Repository URL]
-- **Documentation**: [API Documentation]
-
+- **GitHub Repository**: https://github.com/ramjirathore/status-page
 ---
 
 **Built with ❤️ using React, TypeScript, and Socket.IO**
