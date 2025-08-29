@@ -51,6 +51,16 @@ status-page/
 - Node.js (v18 or higher)
 - npm or yarn
 
+### Demo Accounts
+
+The application comes with pre-configured demo accounts:
+
+- **Admin User**: `admin@techcorp.com` (Full admin access)
+- **Member User**: `member@techcorp.com` (Limited access)
+- **Password**: `admin123` or leave empty
+
+**Note**: Only existing users can login. New user registration is not available in this demo version.
+
 ### Backend Setup
 
 1. Navigate to the backend directory:

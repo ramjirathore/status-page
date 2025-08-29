@@ -399,7 +399,7 @@ This project is licensed under the MIT License.
 
 - **Live Demo**: [https://status-page-gamma-three.vercel.app/](https://status-page-gamma-three.vercel.app/)
 - **Backend API**: [https://status-page-bx79.onrender.com/api](https://status-page-bx79.onrender.com/api)
-- **GitHub Repository**: https://github.com/ramjirathore/status-page
+- **GitHub Repository**: https://github.com/ramjirathore/status-pa
 ---
 
 **Built with ❤️ using React, TypeScript, and Socket.IO**
