@@ -1,50 +1,109 @@
 # Status Page Frontend
 
-A modern React application for displaying and managing service status and incidents with real-time updates.
+A modern React application for displaying and managing service status and incidents with real-time updates. This application provides a comprehensive status page solution with both public-facing status display and administrative management capabilities.
 
-## Features
+## 🌐 Live Demo
 
-- **Public Status Page**: Real-time display of all services and active incidents
-- **Admin Dashboard**: Full CRUD operations for managing services and incidents
-- **Real-time Updates**: Live updates using Socket.IO
-- **Modern UI**: Built with Tailwind CSS and shadcn/ui components
-- **TypeScript**: Full type safety throughout the application
-- **Responsive Design**: Mobile-friendly interface
-- **Status Indicators**: Visual status indicators for services and incidents
+**Frontend Deployment**: [https://status-page-gamma-three.vercel.app/](https://status-page-gamma-three.vercel.app/)
 
-## Tech Stack
+**Backend API**: [https://status-page-bx79.onrender.com/api](https://status-page-bx79.onrender.com/api)
 
-- **React 18** with TypeScript
-- **Vite** for fast development and building
-- **Tailwind CSS** for styling
-- **shadcn/ui** for UI components
-- **Socket.IO Client** for real-time updates
-- **Axios** for API communication
+## ✨ What This Service Includes
 
-## Prerequisites
+### Core Features
+- **Real-time Status Monitoring**: Live updates of service status and incidents using Socket.IO
+- **Public Status Page**: Clean, professional status page for end users
+- **Admin Dashboard**: Comprehensive management interface for administrators
+- **Multi-organization Support**: Manage multiple organizations and their services
+- **Incident Management**: Full incident lifecycle management with updates
+- **Team Management**: User roles and permissions system
+- **Service Health Tracking**: Monitor service status with visual indicators
 
-- Node.js (v18 or higher)
-- npm or yarn
-- Backend server running (see backend README)
+### Technical Features
+- **Real-time Updates**: Instant synchronization across all connected clients
+- **Responsive Design**: Mobile-first approach with Tailwind CSS
+- **Type Safety**: Full TypeScript implementation
+- **Modern UI/UX**: Built with shadcn/ui components
+- **API Integration**: RESTful API with comprehensive endpoints
+- **Database Integration**: PostgreSQL with Prisma ORM
+- **Authentication Ready**: Clerk integration for user management
 
-## Setup Instructions
+## 🚀 Features
 
-### 1. Install Dependencies
+### Public Status Page
+- **Overall System Status**: Real-time summary of operational vs. non-operational services
+- **Service Cards**: Individual service status with visual indicators and incident counts
+- **Active Incidents**: Live list of current incidents with detailed information
+- **Real-time Updates**: Instant updates when status changes occur
+- **Responsive Layout**: Optimized for desktop, tablet, and mobile devices
+
+### Admin Dashboard
+- **Service Management**: Full CRUD operations for services
+- **Incident Management**: Create, update, and resolve incidents
+- **Incident Updates**: Add progress updates to ongoing incidents
+- **User Management**: Manage users and their roles
+- **Organization Management**: Handle multiple organizations
+- **Team Management**: Assign users to organizations with specific roles
+- **Real-time Collaboration**: See changes immediately across all connected clients
+
+### Status Indicators
+- 🟢 **Operational** - Service is working normally
+- 🟡 **Degraded** - Service is experiencing performance issues
+- 🟠 **Partial Outage** - Service is partially unavailable
+- 🔴 **Major Outage** - Service is completely unavailable
+- 🟣 **Maintenance** - Service is under scheduled maintenance
+
+## 🛠 Tech Stack
+
+- **Frontend Framework**: React 18 with TypeScript
+- **Build Tool**: Vite for fast development and optimized builds
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **Real-time Communication**: Socket.IO Client
+- **HTTP Client**: Axios for API communication
+- **State Management**: React hooks and context
+- **Type Safety**: TypeScript throughout the application
+- **UI Components**: shadcn/ui component library
+- **Icons**: Lucide React icons
+
+## 📋 Prerequisites
+
+- **Node.js**: Version 18 or higher
+- **npm or yarn**: Package manager
+- **Backend Server**: Running backend API (see backend README)
+- **Modern Browser**: Chrome, Firefox, Safari, or Edge
+
+## 🚀 Setup Instructions
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd status-page/frontend
+```
+
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 2. Environment Configuration
+### 3. Environment Configuration
 
-Create a `.env` file in the root directory:
+Create a `.env` file in the frontend root directory:
 
 ```env
-VITE_API_URL="http://localhost:3001/api"
-VITE_SOCKET_URL="http://localhost:3001"
+# API Configuration
+VITE_API_URL="https://status-page-bx79.onrender.com/api"
+
+# Socket.IO Configuration
+VITE_SOCKET_URL="https://status-page-bx79.onrender.com"
+
+# For local development, use:
+# VITE_API_URL="http://localhost:3001/api"
+# VITE_SOCKET_URL="http://localhost:3001"
 ```
 
-### 3. Start Development Server
+### 4. Start Development Server
 
 ```bash
 npm run dev
@@ -52,58 +111,57 @@ npm run dev
 
 The application will be available at `http://localhost:5173`
 
-## Project Structure
+### 5. Build for Production
 
-```
-src/
-├── components/           # React components
-│   ├── ui/              # shadcn/ui components
-│   ├── ServiceCard.tsx  # Service display component
-│   ├── IncidentCard.tsx # Incident display component
-│   ├── PublicStatusPage.tsx # Public status page
-│   └── AdminDashboard.tsx # Admin dashboard
-├── services/            # API and Socket services
-│   ├── api.ts          # API client and endpoints
-│   └── socket.ts       # Socket.IO client
-├── types/              # TypeScript type definitions
-│   └── index.ts        # Application types
-├── App.tsx             # Main application component
-└── main.tsx            # Application entry point
+```bash
+npm run build
 ```
 
-## Application Features
+## 📁 Project Structure
 
-### Public Status Page
+```
+frontend/
+├── public/                 # Static assets
+├── src/
+│   ├── components/         # React components
+│   │   ├── ui/            # shadcn/ui components
+│   │   │   ├── badge.tsx
+│   │   │   ├── button.tsx
+│   │   │   ├── card.tsx
+│   │   │   ├── input.tsx
+│   │   │   ├── select.tsx
+│   │   │   ├── table.tsx
+│   │   │   └── textarea.tsx
+│   │   ├── AdminDashboard.tsx      # Admin management interface
+│   │   ├── IncidentCard.tsx        # Incident display component
+│   │   ├── IncidentUpdateForm.tsx  # Incident update form
+│   │   ├── LoginForm.tsx           # Authentication form
+│   │   ├── PublicStatusPage.tsx    # Public status display
+│   │   └── ServiceCard.tsx         # Service display component
+│   ├── services/           # API and Socket services
+│   │   ├── api.ts          # API client and endpoints
+│   │   └── socket.ts       # Socket.IO client service
+│   ├── types/              # TypeScript type definitions
+│   │   └── index.ts        # Application types
+│   ├── lib/                # Utility functions
+│   │   └── utils.ts        # Common utilities
+│   ├── App.tsx             # Main application component
+│   ├── main.tsx            # Application entry point
+│   └── index.css           # Global styles
+├── package.json            # Dependencies and scripts
+├── tsconfig.json           # TypeScript configuration
+├── vite.config.ts          # Vite configuration
+└── tailwind.config.js      # Tailwind CSS configuration
+```
 
-The public status page displays:
-- **Overall System Status**: Summary of operational vs. non-operational services
-- **Service Cards**: Individual service status with visual indicators
-- **Active Incidents**: List of current incidents with details
-- **Real-time Updates**: Live updates when status changes
-
-#### Service Status Indicators
-
-- 🟢 **Operational** - Service is working normally
-- 🟡 **Degraded** - Service is experiencing performance issues
-- 🟠 **Partial Outage** - Service is partially unavailable
-- 🔴 **Major Outage** - Service is completely unavailable
-
-### Admin Dashboard
-
-The admin dashboard provides:
-- **Service Management**: Add, edit, and update service status
-- **Incident Management**: Create and manage incidents
-- **Real-time Updates**: See changes immediately across all connected clients
-- **Status Controls**: Dropdown selectors for quick status updates
-
-## Testing the Application
+## 🧪 Testing
 
 ### Manual Testing
 
 #### 1. Public Status Page Testing
 
 1. **Navigate to Public Status**:
-   - Open `http://localhost:5173`
+   - Open the application
    - Click "Public Status" in the navigation
 
 2. **Verify Service Display**:
@@ -148,7 +206,7 @@ The admin dashboard provides:
    // Open browser console and verify no connection errors
    
    // Test API endpoints
-   fetch('http://localhost:3001/api/services')
+   fetch('https://status-page-bx79.onrender.com/api/services')
      .then(res => res.json())
      .then(data => console.log('Services:', data));
    ```
@@ -165,13 +223,13 @@ Test the backend API directly:
 
 ```bash
 # Test services endpoint
-curl http://localhost:3001/api/services
+curl https://status-page-bx79.onrender.com/api/services
 
 # Test incidents endpoint
-curl http://localhost:3001/api/incidents
+curl https://status-page-bx79.onrender.com/api/incidents
 
 # Create a test service
-curl -X POST http://localhost:3001/api/services \
+curl -X POST https://status-page-bx79.onrender.com/api/services \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Test Service",
@@ -194,7 +252,7 @@ curl -X POST http://localhost:3001/api/services \
 3. **Socket Connection Testing**:
    ```javascript
    // In browser console
-   const socket = io('http://localhost:3001');
+   const socket = io('https://status-page-bx79.onrender.com');
    
    socket.on('connect', () => {
      console.log('Connected to server');
@@ -205,62 +263,51 @@ curl -X POST http://localhost:3001/api/services \
    });
    ```
 
-## Component Testing
+## 🚀 Deployment
 
-### ServiceCard Component
+### Vercel Deployment
 
-```typescript
-// Test different service statuses
-const testService = {
-  id: '1',
-  name: 'Test Service',
-  status: 'OPERATIONAL' as const,
-  organizationId: 'org1',
-  organization: { id: 'org1', name: 'Test Org' },
-  incidents: [],
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString()
-};
+The application is deployed on Vercel at: [https://status-page-gamma-three.vercel.app/](https://status-page-gamma-three.vercel.app/)
 
-// Test with incidents
-const serviceWithIncidents = {
-  ...testService,
-  incidents: [
-    {
-      id: 'inc1',
-      title: 'Test Incident',
-      description: 'Test description',
-      status: 'OPEN' as const,
-      serviceId: '1',
-      organizationId: 'org1',
-      service: testService,
-      organization: { id: 'org1', name: 'Test Org' },
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }
-  ]
-};
+#### Deployment Steps:
+
+1. **Connect Repository**:
+   - Connect your GitHub repository to Vercel
+   - Set the root directory to `frontend`
+
+2. **Environment Variables**:
+   ```env
+   VITE_API_URL="https://status-page-bx79.onrender.com/api"
+   VITE_SOCKET_URL="https://status-page-bx79.onrender.com"
+   ```
+
+3. **Build Settings**:
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+   - Install Command: `npm install`
+
+### Other Deployment Options
+
+#### Netlify
+```bash
+# Build command
+npm run build
+
+# Publish directory
+dist
 ```
 
-### IncidentCard Component
+#### GitHub Pages
+```bash
+# Add to package.json
+npm install --save-dev gh-pages
 
-```typescript
-// Test different incident statuses
-const testIncident = {
-  id: '1',
-  title: 'Test Incident',
-  description: 'Test description',
-  status: 'OPEN' as const,
-  serviceId: '1',
-  organizationId: 'org1',
-  service: { id: '1', name: 'Test Service' },
-  organization: { id: 'org1', name: 'Test Org' },
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString()
-};
+# Add scripts
+"predeploy": "npm run build",
+"deploy": "gh-pages -d dist"
 ```
 
-## Development Commands
+## 🔧 Development Commands
 
 ```bash
 # Start development server
@@ -279,19 +326,19 @@ npm run type-check
 npm run lint
 ```
 
-## Environment Variables
+## 🌍 Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `VITE_API_URL` | Backend API URL | `http://localhost:3001/api` |
-| `VITE_SOCKET_URL` | Socket.IO server URL | `http://localhost:3001` |
+| Variable | Description | Default | Production |
+|----------|-------------|---------|------------|
+| `VITE_API_URL` | Backend API URL | `http://localhost:3001/api` | `https://status-page-bx79.onrender.com/api` |
+| `VITE_SOCKET_URL` | Socket.IO server URL | `http://localhost:3001` | `https://status-page-bx79.onrender.com` |
 
-## Troubleshooting
+## 🐛 Troubleshooting
 
 ### Common Issues
 
 1. **API Connection Errors**:
-   - Ensure backend server is running on port 3001
+   - Ensure backend server is running
    - Check `VITE_API_URL` in environment variables
    - Verify CORS is configured on backend
 
@@ -327,54 +374,35 @@ The application supports:
 - Safari 14+
 - Edge 90+
 
-## Performance Optimization
+## ⚡ Performance Optimization
 
 1. **Code Splitting**: Components are lazy-loaded where appropriate
 2. **Memoization**: React.memo used for performance-critical components
 3. **Efficient Re-renders**: Proper dependency arrays in useEffect hooks
 4. **Bundle Optimization**: Vite provides optimized builds
+5. **Real-time Updates**: Efficient Socket.IO event handling
 
-## Deployment
-
-### Build for Production
-
-```bash
-npm run build
-```
-
-The build output will be in the `dist` folder.
-
-### Deployment Platforms
-
-1. **Vercel**:
-   - Connect GitHub repository
-   - Set environment variables
-   - Deploy automatically
-
-2. **Netlify**:
-   - Connect GitHub repository
-   - Set build command: `npm run build`
-   - Set publish directory: `dist`
-
-3. **GitHub Pages**:
-   - Add `gh-pages` package
-   - Configure deployment in package.json
-
-### Environment Variables for Production
-
-```env
-VITE_API_URL="https://your-backend-url.com/api"
-VITE_SOCKET_URL="https://your-backend-url.com"
-```
-
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
 3. Make your changes
 4. Add tests if applicable
-5. Submit a pull request
+5. Commit your changes: `git commit -m 'Add amazing feature'`
+6. Push to the branch: `git push origin feature/amazing-feature`
+7. Submit a pull request
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License.
+
+## 🔗 Links
+
+- **Live Demo**: [https://status-page-gamma-three.vercel.app/](https://status-page-gamma-three.vercel.app/)
+- **Backend API**: [https://status-page-bx79.onrender.com/api](https://status-page-bx79.onrender.com/api)
+- **GitHub Repository**: [Repository URL]
+- **Documentation**: [API Documentation]
+
+---
+
+**Built with ❤️ using React, TypeScript, and Socket.IO**

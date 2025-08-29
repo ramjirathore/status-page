@@ -69,44 +69,8 @@ export function LoginForm({ onLogin, onCancel }: LoginFormProps) {
           setError('Invalid password. Use "admin123" for demo.');
         }
       } else {
-        // Create new user if doesn't exist (for demo purposes)
-        const newUser = await usersApi.create({ email, name: email.split('@')[0] });
-        
-        // For demo purposes, make the first user an admin
-        // In a real app, you'd have proper admin setup
-        try {
-          // Get or create a default organization
-          const organizations = await fetch(`${import.meta.env.VITE_API_URL || 'https://status-page-bx79.onrender.com/api'}/organizations`).then(res => res.json());
-          let defaultOrg = organizations[0];
-          
-          if (!defaultOrg) {
-            // Create default organization if none exists
-            defaultOrg = await fetch(`${import.meta.env.VITE_API_URL || 'https://status-page-bx79.onrender.com/api'}/organizations`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ name: 'Default Organization' })
-            }).then(res => res.json());
-          }
-          
-          // Add user as admin to the organization
-          await fetch(`${import.meta.env.VITE_API_URL || 'https://status-page-bx79.onrender.com/api'}/members`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              userId: newUser.id,
-              organizationId: defaultOrg.id,
-              role: 'admin'
-            })
-          });
-          
-          // Fetch the updated user with memberships
-          const updatedUser = await fetch(`${import.meta.env.VITE_API_URL || 'https://status-page-bx79.onrender.com/api'}/users/${newUser.id}`).then(res => res.json());
-          onLogin(updatedUser);
-        } catch (error) {
-          console.error('Error setting up admin privileges:', error);
-          // Still login even if admin setup fails
-          onLogin(newUser);
-        }
+        // User doesn't exist - show error message
+        setError('User not found. Only existing users can login. Please contact an administrator to create an account.');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -119,7 +83,16 @@ export function LoginForm({ onLogin, onCancel }: LoginFormProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Admin Login</CardTitle>
+        <CardTitle>User Login</CardTitle>
+        <p className="text-sm text-gray-600">
+          Login with your existing account credentials
+        </p>
+        <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded">
+          <strong>Demo Accounts:</strong><br />
+          • admin@techcorp.com (Admin)<br />
+          • member@techcorp.com (Member)<br />
+          Password: admin123 or leave empty
+        </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -149,7 +122,7 @@ export function LoginForm({ onLogin, onCancel }: LoginFormProps) {
               onChange={(e) => setPassword(e.target.value)}
             />
             <p className="text-xs text-gray-500 mt-1">
-              Demo: Use "admin123" as password or leave empty
+              Demo: Use "admin123" as password or leave empty for existing users
             </p>
           </div>
 
