@@ -18,6 +18,7 @@ export interface Incident {
   organizationId: string;
   service: Service;
   organization: Organization;
+  updates: IncidentUpdate[];
   createdAt: string;
   updatedAt: string;
 }
@@ -35,6 +36,27 @@ export interface User {
   id: string;
   email: string;
   name?: string;
+  orgs: OrganizationMember[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrganizationMember {
+  id: string;
+  userId: string;
+  organizationId: string;
+  role: string;
+  user: User;
+  organization: Organization;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IncidentUpdate {
+  id: string;
+  incidentId: string;
+  message: string;
+  status: 'OPEN' | 'RESOLVED' | 'MAINTENANCE';
   createdAt: string;
   updatedAt: string;
 }

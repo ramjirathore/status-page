@@ -1,7 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 import { Service, Incident } from '@/types';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://status-page-bx79.onrender.com';
 
 class SocketService {
   private socket: Socket | null = null;
